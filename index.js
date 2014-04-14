@@ -5,15 +5,25 @@ var moment = require('moment');
 var redis = require('redis');
 var async = require('async');
 
-var client = redis.createClient(6379, '127.0.0.1');
+//var client = redis.createClient(6379, '127.0.0.1');
 
-var PATH_TO_LOG = './logs/'
-var logs = fs.readdirSync(PATH_TO_LOG);
+var PATH_TO_LOG = '/mnt';
+var dir_list = ['log-prod-1', 'log-prod-2', 'log-prod-3'];
+var logs = [];
+
+dir_list.forEach(function(dir) {
+  var files = fs.readdirSync(PATH_TO_LOG + dir);
+  files.forEach(function(file) {
+    logs.push(PATH_TO_LOG + '/' + dir + '/' + file);
+  });
+});
+
 var getRegex = /\[(.*)\].*\/bars\/get\/id\/(.{24})/;
 
 
 var queue = async.queue(function (file, callback) {
-  var instream = fs.createReadStream(PATH_TO_LOG + file);
+  console.log('Starting ' + file);
+  var instream = fs.createReadStream(file);
   var outstream = new stream();
   var rl = readline.createInterface(instream, outstream);
 
