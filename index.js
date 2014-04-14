@@ -12,7 +12,7 @@ var dir_list = ['log-prod-1', 'log-prod-2', 'log-prod-3'];
 var logs = [];
 
 dir_list.forEach(function(dir) {
-  var files = fs.readdirSync(PATH_TO_LOG + dir);
+  var files = fs.readdirSync(PATH_TO_LOG + '/' + dir);
   files.forEach(function(file) {
     logs.push(PATH_TO_LOG + '/' + dir + '/' + file);
   });
