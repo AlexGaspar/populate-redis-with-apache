@@ -7,8 +7,10 @@ var async = require('async');
 
 //var client = redis.createClient(6379, '127.0.0.1');
 
-var PATH_TO_LOG = '/mnt';
-var dir_list = ['log-prod-1', 'log-prod-2', 'log-prod-3'];
+//var PATH_TO_LOG = '/mnt';
+var PATH_TO_LOG = 'logs';
+var dir_list = ['dum2', 'dum1'];
+//var dir_list = ['log-prod-1', 'log-prod-2', 'log-prod-3'];
 var logs = [];
 
 dir_list.forEach(function(dir) {
@@ -31,11 +33,16 @@ var queue = async.queue(function (file, callback) {
   rl.on('line', function(line) {
     var array = line.match(getRegex);
     if(array) {
-      var date = moment(array[1].split(':')[0], "DD-MMM-YYYY");
-      var barId = array[2];
+      // 15/Apr/2014:08:30:09
+      var date = array[1].replace(':', ' ');
+      date.substring(0, date.length -5);
+      date = moment(date, "DD-MMM-YYYY HH:mm:ss");
 
-      var key = barId + ':' + date.format('YYYYMMDD');
-      client.incr(key, redis.print);
+      if(date.format('DDHHmm') <= '150811') {
+        var barId = array[2];
+        var key = barId + ':' + date.format('YYYYMMDD');
+        client.incr(key, redis.print);
+      }
     }
   });
 
